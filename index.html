@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#667eea" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <header>
+      <header class="app-header">
+  <div id="topBar" class="top-bar">
+    <span id="topUserEmail" class="top-user">Guest</span>
+    <button id="topLogout" class="top-logout">Log out</button>
+  </div>
+</header>
+    <div id="authBox" class="authbox">
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+
+      <button id="signup">Sign up</button>
+      <p class="auth-hint">New user? Sign up</p>
+      <button id="login">Log in</button>
+      <p class="auth-hint">Already have an account? Log in</p>
+      <button id="logout">Log out</button>
+    </div>
+    <div id="app" class="container" style="display: none">
+      <h1>To-Do List</h1>
+      <p id="currentDate" class="date-badge"></p>
+
+      <div class="app-layout">
+        <aside class="sidebar">
+          <div class="menu">
+            <button onclick="filterTasks('day')">Today</button>
+            <button onclick="filterTasks('week')">This Week</button>
+            <button onclick="filterTasks('month')">Month</button>
+          </div>
+
+          <!-- History Modal -->
+          <div id="historyModal" class="modal">
+            <div class="modal-content">
+              <span class="close" id="closeHistory">&times;</span>
+              <h3>Task History</h3>
+              <label for="historyDate">Select Date:</label>
+              <input type="date" id="historyDate" />
+              <ul id="historyTasks"></ul>
+            </div>
+          </div>
+          <!-- History Button -->
+          <button id="historyBtn">History</button>
+          <div class="settings">
+            <button onclick="toggleSettings()">Settings</button>
+            <div id="settingsPanel" class="settings-panel">
+              <label>
+                <input
+                  type="checkbox"
+                  id="themeToggle"
+                  onchange="toggleTheme()"
+                />
+                Dark Theme
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  id="notifyToggle"
+                  onchange="toggleNotification()"
+                />
+                Notifications
+              </label>
+            </div>
+          </div>
+        </aside>
+        <!-- RIGHT CONTENT -->
+        <div class="content">
+          <div class="input-box">
+            <h3>ADD TASKS</h3>
+            <input type="text" id="taskInput" placeholder="Enter a task" />
+            <input type="date" id="reminderDate" />
+            <button onclick="addTask()">Add</button>
+            <p id="errorMsg" style="color: red"></p>
+          </div>
+          <ul id="taskList"></ul>
+        </div>
+
+        <div class="progress-container">
+          <h4>Today’s Progress</h4>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <span id="progressPercent">0%</span>
+        </div>
+      </div>
+      <p id="dailySummary" class="daily-summary"></p>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

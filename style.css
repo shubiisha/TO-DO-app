@@ -1,0 +1,561 @@
+/* ===== BODY ===== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  background: white;
+  border-radius: 14px;
+  width: 80vw;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+/* Header like a website navbar */
+.app-header {
+  position: sticky; /* sticks to top when scrolling */
+  top: 0;
+  width: 100%;
+  height: 60px;
+  background: #667eea;
+  color: white;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header content */
+.top-bar {
+  width: 80vw; /* match container width */
+  max-width: 1200px;
+  margin: 0 auto; /* center */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* ===== APP LAYOUT ===== */
+.app-layout {
+  display: flex;
+  align-items: flex-start; /* LEFT TOP */
+}
+
+/* ===== SIDEBAR (LEFT CORNER INSIDE) ===== */
+.sidebar {
+  width: 180px;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  max-width: 350px;
+  font-family: Arial, sans-serif;
+  margin: 12px 0;
+}
+
+.progress-container span:first-child {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #667eea;
+  transition: width 0.3s ease;
+}
+#progressPercent {
+  display: inline-block;
+  background: linear-gradient(135deg, #01b331ac, #04f54c6c);
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  min-width: 45px;
+  text-align: center;
+}
+
+/* MENU BUTTONS (YOUR STYLE) */
+.menu button,
+.settings button {
+  width: 100%;
+  margin: 6px 0;
+  padding: 8px;
+  border: none;
+  background: #215fe6;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+}
+#historyBtn {
+  width: 100%;
+  margin: 6px 0;
+  padding: 8px;
+  border: none;
+  background: #215fe6;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+}
+.date-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4facfe, #5f98e9);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.menu button:hover,
+.settings button:hover {
+  background: #667eea;
+  color: #ffffff;
+}
+#historyBtn:hover {
+  background: #667eea;
+  color: #ffffff;
+}
+/* ===== CONTENT (CENTER) ===== */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* ✨ visual styling */
+  background: #ffffff;
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 10px;
+
+  /* subtle elevation */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* smooth interaction */
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* ===== INPUT BOX ===== */
+.input-box {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-box input {
+  padding: 10px;
+  margin: 5px;
+  width: 200px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.input-box button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #215fe6;
+  color: white;
+  cursor: pointer;
+}
+
+.input-box button:hover {
+  background: #667eea;
+}
+
+/* ===== TASK LIST (CENTER) ===== */
+#taskList {
+  list-style: none;
+  padding: 0;
+  width: 60%;
+}
+
+#taskList li {
+  background: #f4f6ff;
+  margin: 10px 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== DELETE BUTTON ===== */
+.delete-btn {
+  background: #f31e1e;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: hwb(0 34% 8%);
+}
+/* Strike-through completed task */
+.completed span {
+  text-decoration: line-through;
+  color: #888;
+}
+/* SETTINGS PANEL */
+.settings-panel {
+  display: none;
+  margin-top: 10px;
+  background: #f4f6ff;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.settings-panel label {
+  display: block;
+  font-size: 14px;
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+/* DARK THEME */
+body.dark {
+  background: linear-gradient(135deg, #1e1e2f, #2b2b45);
+}
+
+body.dark .container {
+  background: #2f2f3f;
+  color: white;
+}
+body.dark .settings-panel {
+  background: #2f2f3f;
+  color: white;
+}
+body.dark .content {
+  background: #2f2f3f;
+  color: white;
+}
+body.dark .daily-summary {
+  background: #2f2f3f;
+  color: white;
+}
+body.dark .progress-container {
+  background: #2f2f3f;
+  color: white;
+}
+body.dark .modal-content {
+  background: #2f2f3f;
+  color: white;
+}
+body.dark #historyTasks li {
+  background: #2f2f3f;
+  color: white;
+}
+
+body.dark #taskList li {
+  background: #3a3a55;
+}
+.daily-summary {
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4caf50;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+/* Modal background */
+.modal {
+  display: none; /* hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4); /* dark overlay */
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+/* Close button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #000;
+}
+
+/* History tasks list */
+#historyTasks {
+  margin-top: 12px;
+  text-align: left;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-left: 0;
+}
+
+#historyTasks li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  margin: 4px 0;
+  border-radius: 6px;
+  background: #f0f4f8;
+}
+
+#historyTasks li.completed span {
+  text-decoration: none;
+  color: #888;
+}
+/* Login container (optional wrapper if you add one later) */
+.authbox {
+  max-width: 90vw;
+  width: 520px;
+  margin: 40px auto;
+  padding: 32px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* Inputs */
+#email,
+#password {
+  width: 100%;
+  padding: 14px 16px;
+  margin: 12px 0;
+  border-radius: 10px;
+  box-sizing: border-box;
+  border: 2px solid #000;
+  background: #fff;
+  outline: none;
+  font-size: 16px;
+  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Input focus animation */
+#email:focus,
+#password:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Placeholder style */
+#email::placeholder,
+#password::placeholder {
+  color: #999;
+  transition: color 0.2s ease;
+}
+
+#email:focus::placeholder,
+#password:focus::placeholder {
+  color: #bbb;
+}
+
+/* Buttons */
+#signup,
+#login,
+#logout {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+/* Button colors */
+#signup {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+#login {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+#logout {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+}
+
+/* Hover effect */
+#signup:hover,
+#login:hover,
+#logout:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Click effect */
+#signup:active,
+#login:active,
+#logout:active {
+  transform: scale(0.98);
+}
+
+/* Subtle glow on hover */
+#signup:hover {
+  box-shadow: 0 0 15px rgba(67, 206, 162, 0.6);
+}
+
+#login:hover {
+  box-shadow: 0 0 15px rgba(118, 75, 162, 0.6);
+}
+
+#logout:hover {
+  box-shadow: 0 0 15px rgba(255, 65, 108, 0.6);
+}
+.auth-hint {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}
+.top-bar {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.top-user {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.top-logout {
+  border: none;
+  background: transparent;
+  color: #000;
+  font-size: 18px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+  padding: 6px;
+  border-radius: 50%;
+}
+
+.top-logout:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* MOBILE SUPPORT */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    min-height: 90vh;
+    padding: 15px;
+  }
+
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .menu button,
+  .settings button {
+    width: auto;
+    flex: 1;
+    margin: 4px;
+    font-size: 13px;
+  }
+
+  .content {
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  #taskList {
+    width: 100%;
+  }
+
+  #taskList li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .delete-btn {
+    align-self: flex-end;
+  }
+
+  .input-box input {
+    width: 90%;
+  }
+
+  .modal-content {
+    margin: 60px auto;
+    width: 90%;
+  }
+}
