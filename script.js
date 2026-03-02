@@ -79,10 +79,21 @@ function formatDateToDDMMYYYY(reminderDate) {
 
 /* ADD TASK */
 async function addTask() {
-  const taskText = input.value.trim();
+  const taskInput = document.getElementById("taskInput");
   const reminderDate = document.getElementById("reminderDate").value;
+  const errorMsg = document.getElementById("errorMsg");
 
-  if (taskText === "" || reminderDate === "") return;
+  const taskText = taskInput.value.trim();
+
+  if (!taskText) {
+    errorMsg.textContent = "Please enter a task.";
+    return;
+  }
+
+  if (!reminderDate) {
+    errorMsg.textContent = "Please select a date.";
+    return;
+  }
 
   const formattedDate = formatDateToDDMMYYYY(reminderDate);
   const category = getTaskCategory(reminderDate);
@@ -93,17 +104,6 @@ async function addTask() {
 
   if (delay > 0 && Notification.permission === "granted") {
     setTimeout(() => showNotification(taskText), delay);
-  }
-
-  const errorMsg = document.getElementById("errorMsg");
-  if (!taskText) {
-    errorMsg.textContent = "Please enter a task.";
-    return;
-  }
-
-  if (!reminderDate) {
-    errorMsg.textContent = "Please select a date.";
-    return;
   }
 
   const selectedDate = new Date(reminderDate);
@@ -303,7 +303,6 @@ async function displayTasksForDate(date) {
     historyTasksContainer.appendChild(li);
   });
 }
-
 /* ON LOAD */
 window.onload = function () {
   setupAuth(async (uid) => {
@@ -313,6 +312,7 @@ window.onload = function () {
 
   requestNotificationPermission();
 };
+
 window.addTask = addTask;
 window.filterTasks = (type) => {
   document.querySelectorAll("#taskList li").forEach((li) => {

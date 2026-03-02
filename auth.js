@@ -15,6 +15,7 @@ export function setupAuth(onLogin) {
   const topBar = document.getElementById("topBar");
   const topUser = document.getElementById("topUserEmail");
   const topLogout = document.getElementById("topLogout");
+  const header = document.querySelector(".app-header");
 
   document.getElementById("signup").onclick = async () => {
     try {
@@ -42,11 +43,13 @@ export function setupAuth(onLogin) {
       authBox.style.display = "none";
       appDiv.style.display = "block";
       topBar.style.display = "flex";
+      header.style.display = "flex";
       topUser.textContent = user.email;
 
       if (onLogin) await onLogin(user.uid);
     } else {
       authBox.style.display = "block";
+      header.style.display = "none";
       appDiv.style.display = "none";
       topBar.style.display = "none";
       topUser.textContent = "Guest";
