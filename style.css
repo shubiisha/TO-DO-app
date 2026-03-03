@@ -6,8 +6,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 80px;
   font-family: Arial, sans-serif;
   gap: 12px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== CONTAINER ===== */
@@ -17,7 +20,9 @@ body {
   width: 80vw;
   max-width: 1200px;
   margin: 20px auto;
+  margin-top: 80px;
   padding: 16px;
+  position: relative;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 /* Header like a website navbar */
@@ -27,7 +32,9 @@ body {
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: rgba(255, 255, 255, 0.507);
+  backdrop-filter: blur(50px);
+
   color: white;
   display: flex;
   align-items: center;
@@ -136,6 +143,9 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   letter-spacing: 1px;
   margin-bottom: 15px;
+  position: absolute;
+  top: 10px;
+  left: 15px;
 }
 
 .menu button:hover,
@@ -216,7 +226,7 @@ body {
 
 /* ===== DELETE BUTTON ===== */
 .delete-btn {
-  background: #f31e1e;
+  background: rgba(236, 22, 22, 0.886);
   border: none;
   color: white;
   padding: 6px 10px;
@@ -288,6 +298,21 @@ body.dark .authbox {
 body.dark #taskList li {
   background: #3a3a55;
 }
+body.dark .daily-summary {
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #41de478a;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #03515caf, #07a0b49c);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/*daily summary*/
 .daily-summary {
   display: block;
   text-align: center;
@@ -300,6 +325,10 @@ body.dark #taskList li {
   background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+}
+/*heading*/
+.heading {
+  text-align: center;
 }
 /* Modal background */
 .modal {
@@ -371,7 +400,27 @@ body.dark #taskList li {
   box-shadow: none;
   overflow: hidden;
 }
+/*footer*/
+.footer {
+  margin-top: 30px;
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+}
 
+.motivation {
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.copyright {
+  font-size: 13px;
+  opacity: 0.8;
+}
 /* Inputs */
 #email,
 #password {
@@ -489,7 +538,7 @@ body.dark #taskList li {
   padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(236, 22, 22, 0.664);
   color: #fff;
   font-weight: 600;
   font-size: 14px;
@@ -499,7 +548,7 @@ body.dark #taskList li {
 }
 
 .top-logout:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(236, 22, 22, 0.371);
   transform: translateY(-1px);
 }
 .app-brand {
