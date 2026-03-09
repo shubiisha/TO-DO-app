@@ -24,6 +24,7 @@ function renderTodos(todos) {
     checkbox.addEventListener("change", async () => {
       li.classList.toggle("completed", checkbox.checked);
       await toggleTodo(todo.id, checkbox.checked);
+
       updateTodayProgress();
       updateDailySummary();
     });
@@ -56,7 +57,16 @@ function renderTodos(todos) {
   updateTodayProgress();
   updateDailySummary();
 }
+function renderTasks(tasks) {
+  const taskList = document.getElementById("taskList");
+  taskList.innerHTML = "";
 
+  tasks.forEach((task) => {
+    const li = document.createElement("li");
+    li.textContent = task.text;
+    taskList.appendChild(li);
+  });
+}
 /* CATEGORY BASED ON DATE */
 function getTaskCategory(date) {
   const today = new Date();
@@ -131,7 +141,11 @@ async function addTask() {
 
   const todos = await loadTodos(user.uid);
   renderTodos(todos);
-
+  errorMsg.style.color = "green";
+  errorMsg.textContent = "Task added successfully! ✅";
+  setTimeout(() => {
+    errorMsg.textContent = "";
+  }, 3000);
   input.value = "";
   document.getElementById("reminderDate").value = "";
 }
@@ -187,6 +201,7 @@ function showNotification(taskText) {
     });
   }
 }
+
 function updateDate() {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");

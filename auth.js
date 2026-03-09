@@ -16,6 +16,7 @@ export function setupAuth(onLogin) {
   const topUser = document.getElementById("topUserEmail");
   const topLogout = document.getElementById("topLogout");
   const header = document.querySelector(".app-header");
+  const footer = document.querySelector("footer");
 
   document.getElementById("signup").onclick = async () => {
     try {
@@ -42,6 +43,7 @@ export function setupAuth(onLogin) {
     if (user) {
       authBox.style.display = "none";
       appDiv.style.display = "block";
+      footer.style.display = "block";
       topBar.style.display = "flex";
       header.style.display = "flex";
       topUser.textContent = user.email;
@@ -51,6 +53,7 @@ export function setupAuth(onLogin) {
       authBox.style.display = "block";
       header.style.display = "none";
       appDiv.style.display = "none";
+      footer.style.display = "none";
       topBar.style.display = "none";
       topUser.textContent = "Guest";
     }

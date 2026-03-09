@@ -61,7 +61,8 @@ body {
 .sidebar {
   width: 180px;
   padding: 10px;
-  border-right: 1px solid #ddd;
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 10%;
 }
 .progress-container {
   display: flex;
@@ -121,6 +122,7 @@ body {
   cursor: pointer;
   font-size: 14px;
   color: white;
+  border-radius: 6px;
 }
 #historyBtn {
   width: 100%;
@@ -131,6 +133,7 @@ body {
   cursor: pointer;
   font-size: 14px;
   color: white;
+  border-radius: 6px;
 }
 .date-badge {
   display: inline-block;
@@ -157,6 +160,7 @@ body {
   background: #667eea;
   color: #ffffff;
 }
+
 /* ===== CONTENT (CENTER) ===== */
 .content {
   flex: 1;
