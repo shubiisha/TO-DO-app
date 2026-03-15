@@ -570,39 +570,109 @@ body.dark .daily-summary {
   border-radius: 6px;
 }
 /* MOBILE SUPPORT */
+
+/* =========================================
+   MOBILE RESPONSIVE DESIGN
+========================================= */
+
 @media (max-width: 768px) {
+  body {
+    padding-top: 70px;
+    gap: 8px;
+  }
+
+  /* Container full width */
   .container {
     width: 95%;
-    min-height: 90vh;
-    padding: 15px;
+    margin: 10px auto;
+    padding: 12px;
+    border-radius: 12px;
   }
 
+  /* Header */
+  .top-bar {
+    width: 95%;
+  }
+
+  .app-brand {
+    font-size: 16px;
+  }
+
+  .app-brand img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .top-user {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .top-logout {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  /* Layout becomes vertical */
   .app-layout {
     flex-direction: column;
+    align-items: stretch;
   }
 
+  /* Sidebar becomes horizontal toolbar */
   .sidebar {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Progress container */
+  .progress-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  /* Menu buttons layout */
+  .menu,
+  .settings {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
   }
 
   .menu button,
-  .settings button {
-    width: auto;
-    flex: 1;
+  .settings button,
+  #historyBtn {
+    flex: 1 1 40%;
     margin: 4px;
     font-size: 13px;
+    padding: 8px;
   }
 
+  /* Content area */
   .content {
-    margin: 10px 0;
+    width: 100%;
+    margin: 0;
+    padding: 15px;
+  }
+
+  /* Input section */
+  .input-box input {
+    width: 100%;
+    max-width: 100%;
+    margin: 6px 0;
+  }
+
+  .input-box button {
     width: 100%;
   }
 
+  /* Task list full width */
   #taskList {
     width: 100%;
   }
@@ -610,19 +680,69 @@ body.dark .daily-summary {
   #taskList li {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 8px;
   }
 
   .delete-btn {
     align-self: flex-end;
   }
 
-  .input-box input {
-    width: 90%;
+  /* Date badge */
+  .date-badge {
+    position: static;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 6px 12px;
   }
 
+  /* Modal */
   .modal-content {
-    margin: 60px auto;
     width: 90%;
+    margin: 70px auto;
+  }
+
+  /* Auth box */
+  .authbox {
+    width: 95%;
+    padding: 20px;
+  }
+
+  /* Footer */
+  .footer {
+    font-size: 14px;
+    padding: 15px 10px;
+  }
+}
+
+/* =========================================
+   EXTRA SMALL PHONES
+========================================= */
+
+@media (max-width: 480px) {
+  .heading {
+    font-size: 20px;
+  }
+
+  .menu button,
+  .settings button,
+  #historyBtn {
+    flex: 1 1 100%;
+  }
+
+  .top-user {
+    display: none;
+  }
+
+  .app-brand {
+    font-size: 14px;
+  }
+
+  .progress-container span:first-child {
+    font-size: 12px;
+  }
+
+  #progressPercent {
+    font-size: 12px;
+    padding: 3px 8px;
   }
 }
