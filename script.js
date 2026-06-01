@@ -4,6 +4,7 @@ import { auth } from "./firebase.js";
 
 const input = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
+let currentFilter = "all";
 
 function renderTodos(todos) {
   taskList.innerHTML = "";
@@ -47,6 +48,7 @@ function renderTodos(todos) {
 
       const todos = await loadTodos(user.uid);
       renderTodos(todos);
+      applyCurrentFilter();
     };
 
     li.appendChild(leftDiv);
@@ -90,38 +92,33 @@ function formatDateToDDMMYYYY(reminderDate) {
 /* ADD TASK */
 async function addTask() {
   const taskInput = document.getElementById("taskInput");
-  const reminderDate = document.getElementById("reminderDate").value;
+  const reminderDateInput = document.getElementById("reminderDate");
   const errorMsg = document.getElementById("errorMsg");
 
   const taskText = taskInput.value.trim();
+  const reminderDate = reminderDateInput.value;
 
+  // Validation
   if (!taskText) {
+    errorMsg.style.color = "red";
     errorMsg.textContent = "Please enter a task.";
     return;
   }
 
   if (!reminderDate) {
+    errorMsg.style.color = "red";
     errorMsg.textContent = "Please select a date.";
     return;
   }
 
-  const formattedDate = formatDateToDDMMYYYY(reminderDate);
-  const category = getTaskCategory(reminderDate);
-
-  const reminderTime = new Date(reminderDate).getTime();
-  const now = Date.now();
-  const delay = reminderTime - now;
-
-  if (delay > 0 && Notification.permission === "granted") {
-    setTimeout(() => showNotification(taskText), delay);
-  }
-
   const selectedDate = new Date(reminderDate);
   const today = new Date();
+
   today.setHours(0, 0, 0, 0);
   selectedDate.setHours(0, 0, 0, 0);
 
   if (selectedDate < today) {
+    errorMsg.style.color = "red";
     errorMsg.textContent = "You cannot add tasks for past dates.";
     return;
   }
@@ -129,25 +126,58 @@ async function addTask() {
   errorMsg.textContent = "";
 
   const user = auth.currentUser;
-  console.log("User:", user);
 
   if (!user) {
     alert("Please login first");
     return;
   }
 
-  console.log("Adding todo:", taskText);
+  // Save task
   await addTodo(user.uid, taskText, reminderDate);
 
+  // Schedule notification
+  scheduleNotification(taskText, reminderDate);
+
+  // Reload tasks
   const todos = await loadTodos(user.uid);
   renderTodos(todos);
+  applyCurrentFilter();
+
   errorMsg.style.color = "green";
   errorMsg.textContent = "Task added successfully! ✅";
+
   setTimeout(() => {
     errorMsg.textContent = "";
   }, 3000);
-  input.value = "";
-  document.getElementById("reminderDate").value = "";
+
+  taskInput.value = "";
+  reminderDateInput.value = "";
+}
+
+// Notification scheduler
+async function scheduleNotification(taskText, reminderDate) {
+  if (!("Notification" in window)) return;
+
+  if (Notification.permission !== "granted") {
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") return;
+  }
+
+  const reminderTime = new Date(reminderDate).getTime();
+  const delay = reminderTime - Date.now();
+
+  if (delay > 0) {
+    setTimeout(() => {
+      showNotification(taskText);
+    }, delay);
+
+    console.log(
+      `Notification scheduled for "${taskText}" in ${Math.round(
+        delay / 1000,
+      )} seconds`,
+    );
+  }
 }
 const historyDateInput = document.getElementById("historyDate");
 const historyTasksContainer = document.getElementById("historyTasks");
@@ -159,12 +189,21 @@ historyDateInput.addEventListener("change", () => {
 
 /* FILTER TASKS */
 function filterTasks(type) {
+  currentFilter = type;
+
   document.querySelectorAll("#taskList li").forEach((task) => {
     task.style.display =
       type === "all" || task.dataset.type === type ? "flex" : "none";
   });
 }
-
+function applyCurrentFilter() {
+  document.querySelectorAll("#taskList li").forEach((task) => {
+    task.style.display =
+      currentFilter === "all" || task.dataset.type === currentFilter
+        ? "flex"
+        : "none";
+  });
+}
 /* SETTINGS */
 function toggleSettings() {
   const panel = document.getElementById("settingsPanel");
@@ -181,27 +220,113 @@ function toggleTheme() {
 }
 
 /* NOTIFICATIONS */
-function toggleNotification() {
-  const enabled = document.getElementById("notifyToggle").checked;
-  localStorage.setItem("notifications", enabled);
+
+// Initialize notification settings
+window.addEventListener("DOMContentLoaded", async () => {
+  const notifyToggle = document.getElementById("notifyToggle");
+
+  // Default notifications to enabled for new users
+  if (localStorage.getItem("notifications") === null) {
+    localStorage.setItem("notifications", "true");
+  }
+
+  const notificationsEnabled = localStorage.getItem("notifications") === "true";
+
+  notifyToggle.checked = notificationsEnabled;
+
+  // Ask for permission if notifications are enabled
+  if (
+    notificationsEnabled &&
+    "Notification" in window &&
+    Notification.permission === "default"
+  ) {
+    const allowed = await requestNotificationPermission();
+
+    if (!allowed) {
+      notifyToggle.checked = false;
+      localStorage.setItem("notifications", "false");
+    }
+  }
+});
+
+async function requestNotificationPermission() {
+  if (!("Notification" in window)) {
+    alert("This browser does not support notifications.");
+    return false;
+  }
+
+  if (Notification.permission === "granted") {
+    return true;
+  }
+
+  if (Notification.permission === "denied") {
+    alert(
+      "Notifications are blocked. Please enable them in your browser settings.",
+    );
+    return false;
+  }
+
+  const permission = await Notification.requestPermission();
+
+  return permission === "granted";
+}
+
+async function toggleNotification() {
+  const notifyToggle = document.getElementById("notifyToggle");
+  const enabled = notifyToggle.checked;
+
+  if (enabled) {
+    const allowed = await requestNotificationPermission();
+
+    if (!allowed) {
+      notifyToggle.checked = false;
+      localStorage.setItem("notifications", "false");
+      return;
+    }
+  }
+
+  localStorage.setItem("notifications", enabled ? "true" : "false");
+
   alert(enabled ? "Notifications Enabled 🔔" : "Notifications Disabled 🔕");
 }
 
-function requestNotificationPermission() {
-  if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission();
-  }
-}
-
 function showNotification(taskText) {
-  if (Notification.permission === "granted") {
-    new Notification("⏰ Task Reminder", {
-      body: taskText,
-      icon: "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
-    });
+  const notificationsEnabled = localStorage.getItem("notifications") === "true";
+
+  if (
+    !notificationsEnabled ||
+    !("Notification" in window) ||
+    Notification.permission !== "granted"
+  ) {
+    return;
   }
+
+  new Notification("⏰ Task Reminder", {
+    body: taskText,
+    icon: "https://cdn-icons-png.flaticon.com/512/1827/1827392.png",
+  });
 }
 
+async function checkTodayTasks(uid) {
+  const todos = await loadTodos(uid);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const todayTasks = todos.filter((task) => {
+    const taskDate = new Date(task.date); // use task.date, not reminderDate
+    taskDate.setHours(0, 0, 0, 0);
+
+    return taskDate.getTime() === today.getTime();
+  });
+
+  if (todayTasks.length > 0) {
+    const taskNames = todayTasks.map((t) => t.text).join(", ");
+
+    showNotification(`Today's Tasks: ${taskNames}`);
+  }
+}
+/* update date */
 function updateDate() {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");
@@ -323,17 +448,16 @@ window.onload = function () {
   setupAuth(async (uid) => {
     const todos = await loadTodos(uid);
     renderTodos(todos);
+
+    // Show reminder when website opens
+    await checkTodayTasks(uid);
   });
 
   requestNotificationPermission();
 };
 
 window.addTask = addTask;
-window.filterTasks = (type) => {
-  document.querySelectorAll("#taskList li").forEach((li) => {
-    li.style.display = type === li.dataset.type ? "flex" : "none";
-  });
-};
+window.filterTasks = filterTasks;
 window.toggleSettings = toggleSettings;
 window.toggleTheme = toggleTheme;
 window.toggleNotification = toggleNotification;
