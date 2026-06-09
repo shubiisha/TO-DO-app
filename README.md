@@ -142,11 +142,3 @@ Safari → Share → Add to Home Screen
 - Cloud Backup & Sync
 
 ---
-
-## 👨‍💻 Author
-
-Developed by [Your Name]
-
-GitHub: https://github.com/your-username
-
----
