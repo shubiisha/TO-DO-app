@@ -1,10 +1,16 @@
 import { setupAuth } from "./auth.js";
-import { loadTodos, addTodo, toggleTodo, deleteTodo } from "./todos.js";
+import {
+  loadTodos,
+  addTodo,
+  toggleTodo,
+  deleteTodo,
+  updateTodo,
+} from "./todos.js";
 import { auth } from "./firebase.js";
 
 const input = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
-let currentFilter = "all";
+let currentFilter = "day";
 
 function renderTodos(todos) {
   taskList.innerHTML = "";
@@ -47,12 +53,81 @@ function renderTodos(todos) {
       await deleteTodo(todo.id);
 
       const todos = await loadTodos(user.uid);
+
       renderTodos(todos);
       applyCurrentFilter();
     };
+    const updateBtn = document.createElement("button");
+    updateBtn.textContent = "UPDATE";
+    updateBtn.className = "update-btn";
+
+    updateBtn.onclick = async () => {
+      const leftDiv = li.querySelector(".task-left");
+
+      // Prevent multiple edit boxes
+      if (leftDiv.querySelector(".editTaskInput")) return;
+
+      const editInput = document.createElement("input");
+      editInput.type = "text";
+      editInput.value = todo.text;
+      editInput.className = "editTaskInput";
+
+      const editDate = document.createElement("input");
+      editDate.type = "date";
+      editDate.value = todo.date;
+      editDate.className = "editTaskDate";
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "SAVE";
+
+      saveBtn.onclick = async () => {
+        const newText = editInput.value.trim();
+        const newDate = editDate.value;
+
+        if (!newText || !newDate) {
+          alert("Please enter task and date");
+          return;
+        }
+
+        await updateTodo(todo.id, newText, newDate);
+
+        const user = auth.currentUser;
+        const todos = await loadTodos(user.uid);
+
+        renderTodos(todos);
+        applyCurrentFilter();
+      };
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "CANCEL";
+      cancelBtn.className = "cancel-btn";
+
+      const editContainer = document.createElement("div");
+      editContainer.className = "edit-container";
+
+      editContainer.appendChild(editInput);
+      editContainer.appendChild(editDate);
+
+      const buttonRow = document.createElement("div");
+      buttonRow.className = "edit-buttons";
+
+      buttonRow.appendChild(saveBtn);
+      buttonRow.appendChild(cancelBtn);
+
+      editContainer.appendChild(buttonRow);
+
+      li.innerHTML = "";
+      li.appendChild(editContainer);
+    };
+
+    const actions = document.createElement("div");
+    actions.className = "task-actions";
+
+    actions.appendChild(deleteBtn);
+    actions.appendChild(updateBtn);
 
     li.appendChild(leftDiv);
-    li.appendChild(deleteBtn);
+    li.appendChild(actions);
     taskList.appendChild(li);
   });
 
@@ -148,7 +223,7 @@ async function addTask() {
 
   setTimeout(() => {
     errorMsg.textContent = "";
-  }, 3000);
+  }, 1000);
 
   taskInput.value = "";
   reminderDateInput.value = "";
@@ -447,7 +522,11 @@ async function displayTasksForDate(date) {
 window.onload = function () {
   setupAuth(async (uid) => {
     const todos = await loadTodos(uid);
+
     renderTodos(todos);
+
+    // Default view = Today's Tasks
+    filterTasks("day");
 
     // Show reminder when website opens
     await checkTodayTasks(uid);

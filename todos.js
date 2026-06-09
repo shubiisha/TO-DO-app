@@ -38,3 +38,12 @@ export async function deleteTodo(id) {
   const ref = doc(db, "todos", id);
   await deleteDoc(ref);
 }
+
+export async function updateTodo(id, text, date) {
+  const ref = doc(db, "todos", id);
+
+  await updateDoc(ref, {
+    text,
+    date,
+  });
+}
