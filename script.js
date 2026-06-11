@@ -11,11 +11,26 @@ import { auth } from "./firebase.js";
 const input = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
 let currentFilter = "day";
+let currentView = "day";
+let allTodos = [];
 
 function renderTodos(todos) {
+  todos.sort((a, b) => new Date(a.date) - new Date(b.date));
   taskList.innerHTML = "";
+  let currentDate = "";
 
   todos.forEach((todo) => {
+    if (currentView !== "day" && todo.date !== currentDate) {
+      currentDate = todo.date;
+
+      const header = document.createElement("h3");
+
+      header.className = "date-header";
+
+      header.textContent = formatDateToDDMMYYYY(todo.date);
+
+      taskList.appendChild(header);
+    }
     const li = document.createElement("li");
     if (todo.completed) li.classList.add("completed");
     li.dataset.date = todo.date;
@@ -37,8 +52,7 @@ function renderTodos(todos) {
     });
 
     const span = document.createElement("span");
-    span.textContent = `${todo.text} (⏱️ ${formatDateToDDMMYYYY(todo.date)})`;
-
+    span.textContent = todo.text;
     leftDiv.appendChild(checkbox);
     leftDiv.appendChild(span);
 
@@ -52,9 +66,9 @@ function renderTodos(todos) {
 
       await deleteTodo(todo.id);
 
-      const todos = await loadTodos(user.uid);
+      allTodos = await loadTodos(user.uid);
 
-      renderTodos(todos);
+      renderTodos(allTodos);
       updateTodayProgress();
       updateDailySummary();
       applyCurrentFilter();
@@ -94,12 +108,16 @@ function renderTodos(todos) {
         await updateTodo(todo.id, newText, newDate);
 
         const user = auth.currentUser;
-        const todos = await loadTodos(user.uid);
+        allTodos = await loadTodos(user.uid);
 
-        renderTodos(todos);
+        if (currentView === "calendar") {
+          renderTodos(allTodos);
+        } else {
+          filterTasks(currentFilter);
+        }
+
         updateTodayProgress();
         updateDailySummary();
-        applyCurrentFilter();
       };
 
       const cancelBtn = document.createElement("button");
@@ -222,9 +240,9 @@ async function addTask() {
   scheduleNotification(taskText, reminderDate);
 
   // Reload tasks
-  const todos = await loadTodos(user.uid);
+  allTodos = await loadTodos(user.uid);
 
-  renderTodos(todos);
+  renderTodos(allTodos);
   updateTodayProgress();
   updateDailySummary();
 
@@ -273,11 +291,43 @@ historyDateInput.addEventListener("change", () => {
 /* FILTER TASKS */
 function filterTasks(type) {
   currentFilter = type;
+  currentView = type;
 
-  document.querySelectorAll("#taskList li").forEach((task) => {
-    task.style.display =
-      type === "all" || task.dataset.type === type ? "flex" : "none";
-  });
+  let filtered = [];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const startOfWeek = new Date(today);
+  const day = today.getDay();
+  const diffToMonday = day === 0 ? -6 : 1 - day;
+  startOfWeek.setDate(today.getDate() + diffToMonday);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+  if (type === "day") {
+    filtered = allTodos.filter((t) => {
+      const d = new Date(t.date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    });
+  } else if (type === "week") {
+    filtered = allTodos.filter((t) => {
+      const d = new Date(t.date);
+      return d >= startOfWeek && d <= endOfWeek;
+    });
+  } else if (type === "month") {
+    filtered = allTodos.filter((t) => {
+      const d = new Date(t.date);
+      return (
+        d.getMonth() === today.getMonth() &&
+        d.getFullYear() === today.getFullYear()
+      );
+    });
+  }
+
+  renderTodos(filtered);
 }
 function applyCurrentFilter() {
   document.querySelectorAll("#taskList li").forEach((task) => {
@@ -525,9 +575,9 @@ async function displayTasksForDate(date) {
 /* ON LOAD */
 window.onload = function () {
   setupAuth(async (uid) => {
-    const todos = await loadTodos(uid);
+    allTodos = await loadTodos(uid);
 
-    renderTodos(todos);
+    renderTodos(allTodos);
     await updateTodayProgress();
     await updateDailySummary();
 
@@ -553,11 +603,9 @@ flatpickr("#calendarDate", {
   dateFormat: "Y-m-d",
 
   async onChange(selectedDates, dateStr) {
-    const user = auth.currentUser;
+    currentView = "calendar";
 
-    const todos = await loadTodos(user.uid);
-
-    const filteredTodos = todos.filter((todo) => todo.date === dateStr);
+    const filteredTodos = allTodos.filter((todo) => todo.date === dateStr);
 
     renderTodos(filteredTodos);
     updateTodayProgress();

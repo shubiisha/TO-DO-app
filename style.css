@@ -315,7 +315,15 @@ body.dark .daily-summary {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
-
+.date-header {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #8b5cf6;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 5px;
+}
 /*daily summary*/
 .daily-summary {
   display: block;
@@ -403,6 +411,29 @@ body.dark .daily-summary {
   border-radius: 16px;
   box-shadow: none;
   overflow: hidden;
+}
+.task-card {
+  background: #f5f7ff;
+  padding: 12px 14px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.task-left span {
+  word-break: break-word;
+}
+
+.completed span {
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 /*footer*/
 .footer {
@@ -591,6 +622,20 @@ li {
 .task-actions {
   display: flex;
   gap: 10px;
+}
+.task-actions button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+.task-actions button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
 }
 .edit-container {
   width: 100%;
