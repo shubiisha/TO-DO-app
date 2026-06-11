@@ -207,18 +207,31 @@ async function addTask() {
     return;
   }
 
-  // Save task
-  await addTodo(user.uid, taskText, reminderDate);
-
   errorMsg.style.color = "green";
   errorMsg.textContent = "Task added successfully! ✅";
+
+  // Save task
+  console.time("addTodo");
+
+  try {
+    await addTodo(user.uid, taskText, reminderDate);
+  } catch (err) {
+    console.error(err);
+  }
+
+  console.timeEnd("addTodo");
 
   // Schedule notification
   scheduleNotification(taskText, reminderDate);
 
   // Reload tasks
+  console.time("loadTodos");
   const todos = await loadTodos(user.uid);
+  console.timeEnd("loadTodos");
+
+  console.time("renderTodos");
   renderTodos(todos);
+  console.timeEnd("renderTodos");
   applyCurrentFilter();
 
   setTimeout(() => {
