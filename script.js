@@ -32,8 +32,8 @@ function renderTodos(todos) {
       li.classList.toggle("completed", checkbox.checked);
       await toggleTodo(todo.id, checkbox.checked);
 
-      updateTodayProgress();
-      updateDailySummary();
+      await updateTodayProgress();
+      await updateDailySummary();
     });
 
     const span = document.createElement("span");
@@ -55,6 +55,8 @@ function renderTodos(todos) {
       const todos = await loadTodos(user.uid);
 
       renderTodos(todos);
+      updateTodayProgress();
+      updateDailySummary();
       applyCurrentFilter();
     };
     const updateBtn = document.createElement("button");
@@ -95,6 +97,8 @@ function renderTodos(todos) {
         const todos = await loadTodos(user.uid);
 
         renderTodos(todos);
+        updateTodayProgress();
+        updateDailySummary();
         applyCurrentFilter();
       };
 
@@ -130,9 +134,6 @@ function renderTodos(todos) {
     li.appendChild(actions);
     taskList.appendChild(li);
   });
-
-  updateTodayProgress();
-  updateDailySummary();
 }
 function renderTasks(tasks) {
   const taskList = document.getElementById("taskList");
@@ -211,35 +212,29 @@ async function addTask() {
   errorMsg.textContent = "Task added successfully! ✅";
 
   // Save task
-  console.time("addTodo");
-
   try {
     await addTodo(user.uid, taskText, reminderDate);
   } catch (err) {
-    console.error(err);
+    console.error("Error adding task:", err);
   }
-
-  console.timeEnd("addTodo");
 
   // Schedule notification
   scheduleNotification(taskText, reminderDate);
 
   // Reload tasks
-  console.time("loadTodos");
   const todos = await loadTodos(user.uid);
-  console.timeEnd("loadTodos");
 
-  console.time("renderTodos");
   renderTodos(todos);
-  console.timeEnd("renderTodos");
+  updateTodayProgress();
+  updateDailySummary();
+
   applyCurrentFilter();
 
   setTimeout(() => {
     errorMsg.textContent = "";
-  }, 1000);
+  }, 3000);
 
   taskInput.value = "";
-  reminderDateInput.value = "";
 }
 
 // Notification scheduler
@@ -430,51 +425,47 @@ updateDate(); // Run immediately
 // Check every minute in case the date changes
 setInterval(updateDate, 60000);
 
-function updateDailySummary() {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-  const tasks = document.querySelectorAll("#taskList li");
+async function updateDailySummary() {
+  const user = auth.currentUser;
+  if (!user) return;
 
-  let totalToday = 0;
-  let completedToday = 0;
+  const todos = await loadTodos(user.uid);
 
-  tasks.forEach((task) => {
-    if (task.dataset.date === today) {
-      // match stored format
-      totalToday++;
-      if (task.classList.contains("completed")) {
-        completedToday++;
-      }
-    }
-  });
+  const today = new Date().toISOString().split("T")[0];
+
+  const todayTasks = todos.filter((task) => task.date === today);
+
+  const completedTasks = todayTasks.filter((task) => task.completed);
 
   let message = "";
 
-  if (totalToday === 0) {
+  if (todayTasks.length === 0) {
     message = "No tasks scheduled for today.";
-  } else if (completedToday === totalToday) {
-    message = `All ${totalToday} tasks completed today 🎉`;
+  } else if (completedTasks.length === todayTasks.length) {
+    message = `All ${todayTasks.length} tasks completed today 🎉`;
   } else {
-    message = `You completed ${completedToday} of ${totalToday} tasks today`;
+    message = `You completed ${completedTasks.length} of ${todayTasks.length} tasks today`;
   }
 
   document.getElementById("dailySummary").textContent = message;
 }
 
-function updateTodayProgress() {
+async function updateTodayProgress() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const todos = await loadTodos(user.uid);
+
   const today = new Date().toISOString().split("T")[0];
-  const tasks = document.querySelectorAll("#taskList li");
 
-  let total = 0;
-  let completed = 0;
+  const todayTasks = todos.filter((task) => task.date === today);
 
-  tasks.forEach((task) => {
-    if (task.dataset.date === today) {
-      total++;
-      if (task.classList.contains("completed")) completed++;
-    }
-  });
+  const completedTasks = todayTasks.filter((task) => task.completed);
 
-  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+  const percent =
+    todayTasks.length === 0
+      ? 0
+      : Math.round((completedTasks.length / todayTasks.length) * 100);
 
   document.getElementById("progressPercent").textContent = `${percent}%`;
 
@@ -537,6 +528,8 @@ window.onload = function () {
     const todos = await loadTodos(uid);
 
     renderTodos(todos);
+    await updateTodayProgress();
+    await updateDailySummary();
 
     // Default view = Today's Tasks
     filterTasks("day");
@@ -555,6 +548,22 @@ window.onload = function () {
       );
   }
 };
+flatpickr("#calendarDate", {
+  inline: true,
+  dateFormat: "Y-m-d",
+
+  async onChange(selectedDates, dateStr) {
+    const user = auth.currentUser;
+
+    const todos = await loadTodos(user.uid);
+
+    const filteredTodos = todos.filter((todo) => todo.date === dateStr);
+
+    renderTodos(filteredTodos);
+    updateTodayProgress();
+    updateDailySummary();
+  },
+});
 
 window.addTask = addTask;
 window.filterTasks = filterTasks;
