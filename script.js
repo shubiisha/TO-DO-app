@@ -210,6 +210,9 @@ async function addTask() {
   // Save task
   await addTodo(user.uid, taskText, reminderDate);
 
+  errorMsg.style.color = "green";
+  errorMsg.textContent = "Task added successfully! ✅";
+
   // Schedule notification
   scheduleNotification(taskText, reminderDate);
 
@@ -217,9 +220,6 @@ async function addTask() {
   const todos = await loadTodos(user.uid);
   renderTodos(todos);
   applyCurrentFilter();
-
-  errorMsg.style.color = "green";
-  errorMsg.textContent = "Task added successfully! ✅";
 
   setTimeout(() => {
     errorMsg.textContent = "";
